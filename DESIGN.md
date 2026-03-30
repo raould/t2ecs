@@ -36,6 +36,10 @@ Implementation examples throughout this document are written in **t2lang** — a
 
 * No automatic registration from interface declarations — explicit registration in constructors for MVP.
 
+### **Note**
+
+This document assumes a 2D game environment.
+
 # **2. Type Vocabulary**
 
 Short, consistent names are used throughout. Abbreviated names are preferred where the meaning is unambiguous:
@@ -89,11 +93,17 @@ All spatial quantities are V2 instances. V2 provides a full complement of method
 
 This is what game developers write. The sections below explain the conventions and constraints.
 
+## The Context
+
+The Context object is used for dependency injection, to provide services that allow for a
+clean, sane, and powerful OO approach to developing Entity sub-class types.
+
 ## **3.1 A complete example**
 
 ArmedFighter creates and owns its Shield — this is correct encapsulation. The caller that creates an ArmedFighter does not need to know anything about shields:
 
-(class ArmedFighter  
+(class ArmedFighter
+  (extends Entity)
   (implements Physical Damageable Renderable)  
   (class-body  
     (field (shield_id: Eid))
@@ -128,6 +138,7 @@ ArmedFighter creates and owns its Shield — this is correct encapsulation. The 
 ## **3.2 Shield — self-contained, self-registering**
 
 (class Shield  
+  (extends Entity)
   (implements Collidable Renderable)  
   (class-body  
     (field (owner_id: Eid))  
@@ -715,5 +726,13 @@ The engine's key ideas:
 # TODOs
 
 * Explicit Registration: MVP requires explicit registration in constructors, which is error-prone and could be automated sooner. Unfortunately there is no simple, minimal, and robust way to achieve automatic registration with TypeScript. Eventually add some kind of static linter rules to check for registration calls based on which interfaces are implemented by a class.
-* Query Engine: Incrementally develop a query engine based on real needs that arise during development.
-* Testing Details: The section on testing is brief; more detail on how to unit test pipeline methods or simulate world state would be valuable.
+
+* Query Engine: Incrementally develop a query engine based on real needs that arise during development. Query Engine: The document defers query engine design, but a short list of anticipated query patterns (e.g., “all entities with Pos and Vel”) would help guide future work.
+
+* Testing Details: The section on testing is brief; more detail on how to unit test pipeline methods or simulate world state would be valuable. The document notes that testing details are brief. Consider expanding with concrete examples of how to unit test pipeline methods, mock world state, and validate system behavior.
+
+* Error Handling: While debug assertions are mentioned, consider specifying how errors are surfaced to developers (e.g., logging, exceptions, or compile-time errors).
+
+* Threading/Future Parallelism: The single-threaded assumption is clear, but a short note on what would need to change for parallel execution (e.g., data ownership, stage scheduling) would be helpful.
+
+* Ctx Object: The Ctx object is mentioned as an open question. Even a minimal example or interface would help clarify its intended use and lifecycle.
